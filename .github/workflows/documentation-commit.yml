@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-22.04
     container: ghcr.io/oca/oca-ci/py3.10-odoo16.0:latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Requirements Installation
         run: |
@@ -26,6 +26,12 @@ jobs:
         run: |
           # try to build the documentation
           python3 -m sphinx -W -d ./docs/.doctrees ./docsource ./docs
+
+      # https://github.com/actions/runner/issues/2033
+      - name: Set ownership
+        run: |
+          # this is to fix GIT not liking owner of the checkout dir
+          chown -R $(id -u):$(id -g) $PWD
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
